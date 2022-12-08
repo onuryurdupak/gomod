@@ -1,4 +1,4 @@
-module gomod
+module github.com/onuryurdupak/gomod
 
 go 1.19
 
