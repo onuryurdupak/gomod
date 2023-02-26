@@ -10,23 +10,33 @@ import (
 const (
 	seekModeOpener byte = 0
 	seekModeCloser byte = 1
+
+	SpecifierBold      Specifier = "b"
+	SpecifierUnderline Specifier = "u"
+	SpecifierRed       Specifier = "red"
+	SpecifierGreen     Specifier = "green"
+	SpecifierBlue      Specifier = "blue"
+	SpecifierYellow    Specifier = "yellow"
+	SpecifierCyan      Specifier = "cyan"
+	SpecifierMagenta   Specifier = "magenta"
 )
 
+type Specifier string
+
 type styleData struct {
-	openTag  string
-	closeTag string
-	style    *color.Color
+	specifier Specifier
+	style     *color.Color
 }
 
 var styles = []styleData{
-	{"<b>", "</b>", color.New(color.Bold)},
-	{"<u>", "</u>", color.New(color.Underline)},
-	{"<red>", "</red>", color.New(color.FgRed)},
-	{"<green>", "</green>", color.New(color.FgGreen)},
-	{"<blue>", "</blue>", color.New(color.FgBlue)},
-	{"<yellow>", "</yellow>", color.New(color.FgYellow)},
-	{"<cyan>", "</cyan>", color.New(color.FgCyan)},
-	{"<magenta>", "</magenta>", color.New(color.FgMagenta)},
+	{SpecifierBold, color.New(color.Bold)},
+	{SpecifierUnderline, color.New(color.Underline)},
+	{SpecifierRed, color.New(color.FgRed)},
+	{SpecifierGreen, color.New(color.FgGreen)},
+	{SpecifierBlue, color.New(color.FgBlue)},
+	{SpecifierYellow, color.New(color.FgYellow)},
+	{SpecifierCyan, color.New(color.FgCyan)},
+	{SpecifierMagenta, color.New(color.FgMagenta)},
 }
 
 // ProcessStyle formats input string according to html-like tag placements.
@@ -66,12 +76,20 @@ func RemoveStyle(in string) string {
 	return in
 }
 
+func getOpener(specifier Specifier) string {
+	return "<" + string(specifier) + ">"
+}
+
+func getCloser(specifier Specifier) string {
+	return "</" + string(specifier) + ">"
+}
+
 func processStyle(in string, styleData styleData) (string, error) {
 	sb := strings.Builder{}
 	var builtString string
 
-	opener := styleData.openTag
-	closer := styleData.closeTag
+	opener := getOpener(styleData.specifier)
+	closer := getCloser(styleData.specifier)
 
 	openerSize := len(opener)
 	closerSize := len(closer)
@@ -100,8 +118,8 @@ func processStyle(in string, styleData styleData) (string, error) {
 			}
 
 			builtString = sb.String()
-			builtString = strings.Replace(builtString, styleData.openTag, "", -1)
-			builtString = strings.Replace(builtString, styleData.closeTag, "", -1)
+			builtString = strings.Replace(builtString, opener, "", -1)
+			builtString = strings.Replace(builtString, closer, "", -1)
 
 			break
 		}
@@ -128,5 +146,7 @@ func processStyle(in string, styleData styleData) (string, error) {
 }
 
 func removeStyle(in string, styleData styleData) string {
-	return strings.Replace(strings.Replace(in, styleData.openTag, "", -1), styleData.closeTag, "", -1)
+	opener := getOpener(styleData.specifier)
+	closer := getCloser(styleData.specifier)
+	return strings.Replace(strings.Replace(in, opener, "", -1), closer, "", -1)
 }

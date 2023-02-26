@@ -15,7 +15,7 @@ func FindIndex(slice []string, find string) (index int, ok bool) {
 	return
 }
 
-func FindSubtring(slice []string, contains string) (element string, ok bool) {
+func FindSubstring(slice []string, contains string) (element string, ok bool) {
 	element = ""
 	ok = false
 	for _, e := range slice {

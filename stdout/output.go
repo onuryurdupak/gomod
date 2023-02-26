@@ -1,6 +1,8 @@
 package stdout
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type OutputLevel int
 
@@ -21,38 +23,62 @@ func SetOutputLevel(newLevel OutputLevel) {
 	currentOutputLevel = newLevel
 }
 
-func OutputDebug(format string, args ...interface{}) {
-	if OutputLevelDebug < currentOutputLevel {
+// Output prints the input content to stdout, highlighting it according to input level.
+//
+// Example output: [INFO]: Your input.
+func Output(level OutputLevel, format string, args ...interface{}) {
+	if level < currentOutputLevel {
 		return
 	}
-	styled := fmt.Sprintf("<b><cyan>Debug:</cyan></b> "+format, args...)
-	styled += "\n"
+	styled := createOutputText(level, "", format, args...) + "\n"
 	PrintfStyled(styled)
 }
 
-func OutputInfo(format string, args ...interface{}) {
-	if OutputLevelInfo < currentOutputLevel {
+// OutputWID outputs the input content with the given session ID.
+//
+// Example output: [INFO][64981af8-1b83-477b-a474-7dea8ca76b8f]: Your input.
+func OutputWID(level OutputLevel, sessionID, format string, args ...interface{}) {
+	if level < currentOutputLevel {
 		return
 	}
-	styled := fmt.Sprintf("<b><green>Info:</green></b> "+format, args...)
-	styled += "\n"
+	styled := createOutputText(level, sessionID, format, args...) + "\n"
 	PrintfStyled(styled)
 }
 
-func OutputWarn(format string, args ...interface{}) {
-	if OutputLevelWarn < currentOutputLevel {
-		return
-	}
-	styled := fmt.Sprintf("<b><yellow>Warn:</yellow></b> "+format, args...)
-	styled += "\n"
-	PrintfStyled(styled)
-}
+func createOutputText(level OutputLevel, sessionID, format string, args ...interface{}) string {
+	var mainHeader string
+	var specifier Specifier
 
-func OutputError(format string, args ...interface{}) {
-	if OutputLevelError < currentOutputLevel {
-		return
+	switch level {
+	case OutputLevelDebug:
+		mainHeader = "[DEBUG]"
+		specifier = SpecifierCyan
+	case OutputLevelInfo:
+		mainHeader = "[INFO]"
+		specifier = SpecifierGreen
+	case OutputLevelWarn:
+		mainHeader = "[WARN]"
+		specifier = SpecifierYellow
+	case OutputLevelError:
+		mainHeader = "[ERROR]"
+		specifier = SpecifierRed
+	default:
+		mainHeader = "[UNKNOWN]"
+		specifier = SpecifierCyan
 	}
-	styled := fmt.Sprintf("<b><red>Error:</red></b> "+format, args...)
-	styled += "\n"
-	PrintfStyled(styled)
+
+	boldOpener := getOpener(SpecifierBold)
+	boldCloser := getCloser(SpecifierBold)
+	specifierOpener := getOpener(specifier)
+	specifierCloser := getCloser(specifier)
+
+	var header string
+	if sessionID == "" {
+		header = boldOpener + specifierOpener + mainHeader + specifierCloser + boldCloser + ": "
+	} else {
+		header = boldOpener + specifierOpener + mainHeader + specifierCloser + "[" + sessionID + "]" + boldCloser + ": "
+	}
+
+	styled := fmt.Sprintf(header+format, args...)
+	return styled
 }
