@@ -25,7 +25,7 @@ func OutputDebug(format string, args ...interface{}) {
 	if OutputLevelDebug < currentOutputLevel {
 		return
 	}
-	styled := fmt.Sprintf("<b><cyan>Info:</cyan></b> "+format, args...)
+	styled := fmt.Sprintf("<b><cyan>Debug:</cyan></b> "+format, args...)
 	styled += "\n"
 	PrintfStyled(styled)
 }
