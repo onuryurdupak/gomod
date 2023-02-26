@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/onuryurdupak/gomod/v2/v2/stdout"
+	"github.com/onuryurdupak/gomod/v2/stdout"
 )
 
 func main() {
