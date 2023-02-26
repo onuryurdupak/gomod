@@ -13,7 +13,7 @@ const (
 	OutputLevelError OutputLevel = 3
 )
 
-var currentOutputLevel OutputLevel = OutputLevelInfo
+var currentOutputLevel = OutputLevelInfo
 
 func GetOutputLevel() OutputLevel {
 	return currentOutputLevel
