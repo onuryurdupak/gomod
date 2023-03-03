@@ -3,8 +3,14 @@ package sync
 import "sync"
 
 type Synced[T any] struct {
-	mutex sync.Mutex
+	mutex *sync.Mutex
 	value T
+}
+
+func NewSynced[T any]() *Synced[T] {
+	return &Synced[T]{
+		mutex: &sync.Mutex{},
+	}
 }
 
 func (s *Synced[T]) Get() T {
