@@ -1,13 +1,13 @@
 module github.com/onuryurdupak/gomod/v2
 
-go 1.21
+go 1.22
 
 require (
-	github.com/fatih/color v1.16.0
-	github.com/google/uuid v1.4.0
+	github.com/fatih/color v1.17.0
+	github.com/google/uuid v1.6.0
 	github.com/stretchr/testify v1.8.2
 	github.com/teris-io/shortid v0.0.0-20220617161101-71ec9f2aa569
-	golang.org/x/sys v0.14.0
+	golang.org/x/sys v0.24.0
 )
 
 require (
